@@ -1,4 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+
+import './index.less';
 
 export default class App extends Component {
 
@@ -142,6 +144,59 @@ export default class App extends Component {
     xhr.send();
   }
 
+  handleFileChange = async (e) => {
+    e.persist();
+    console.log(e)
+    console.log(e.files)
+    const file = e.target.files[0] as File;
+    // const file = new Blob(['12345678900987654321']);
+    console.log(file.name);
+    const size = file.size;
+    console.log(size);
+    const fetchBody = [];
+    const fiSize = 5;
+    const fibr = Math.ceil(size / fiSize);
+    for(let i = 0; i < fiSize; i++) {
+      const start = i * fibr;
+      const end = (i + 1) * fibr;
+      const fileFibr = file.slice(start, end);
+      const form = new FormData();
+      form.append('name', file.name)
+      form.append('file', fileFibr); // slice(0, 200)
+      form.append('start', `${start}`);
+      fetchBody.push(this.formFetch(form));
+    }
+
+    const res = await Promise.all(fetchBody);
+    console.log(res);
+    console.log(res);
+  }
+  
+  fileUpload = async (file: File, fibrNum: number) => {
+    const size = file.size;
+    const fetchBody = [];
+    const fibr = Math.ceil(size / fibrNum);
+    for(let i = 0; i < fibrNum; i++) {
+      const start = i * fibr;
+      const end = (i + 1) * fibr;
+      const fileFibr = file.slice(start, end);
+      const form = new FormData();
+      form.append('name', file.name)
+      form.append('file', fileFibr); // slice(0, 200)
+      form.append('start', `${start}`);
+      fetchBody.push(this.formFetch(form));
+    }
+    // 接受上传响应
+    const res = await Promise.all(fetchBody);
+  }
+
+  formFetch = async (form) => {
+    return fetch('http://localhost:4000/api/file/upload', {
+      method: 'POST',
+      body: form,
+    })
+  }
+
   render() {
     return (
       <div>
@@ -154,6 +209,20 @@ export default class App extends Component {
         <a href="http://localhost:4000/">下载图片</a>
         <button onClick={() => window.open('http://localhost:4000')}>动态下载</button>
         <button onClick={this.ajax}>Ajax</button>
+        <div>
+          <label htmlFor="file" className="xioo-label">
+            <span>上传文件</span>
+            <input id="file" type="file" onChange={this.handleFileChange} className="xioo-file" />
+          </label>
+        </div>
+        <form action="/api/upload" encType="multipart/form-data" method="post">
+          <input type="text" placeholder="请输入名称" name="username" />
+          <input type="file" placeholder="请选择文件" name="file" />
+          <input type="submit" value="提交"/>
+        </form>
+        {/* <div>
+          <iframe src="http://localhost:8000" height={800} width={1600}></iframe>
+        </div> */}
       </div>
     )
   }

@@ -37,7 +37,9 @@
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^3.11.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "multiparty": "^4.2.3"
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
