@@ -220,22 +220,11 @@ const router: { [key: string]: (req: http.IncomingMessage, res: http.ServerRespo
   },
   '/api/file/upload': async (req: http.IncomingMessage, res: http.ServerResponse) => {
     const body = await readStreamData(req);
-    // console.log(body); // 0 - 200 201 - 300 
     const data: { [key: string]: string | Buffer } = {};
     body.forEach(item => {
       data[item.field] = item.data;
     })
-
     const { start, file, name } = data;
-    // const writeStream = fs.createWriteStream(path.join(__dirname, `./${name}`), {
-    //   start: Number(start)
-    // })
-
-    // const stream = new Duplex();
-
-    // stream.push(file);
-    // stream.push(null);
-    // stream.pipe(writeStream)
     queueExec(name, file, start);
     res.end('ok');
   }
